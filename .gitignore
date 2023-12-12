@@ -1,0 +1,9 @@
+.venv
+venv
+*.nii.gz
+*.nii
+*.png
+*.jpg
+*.tif
+*.tiff
+*.jpeg
