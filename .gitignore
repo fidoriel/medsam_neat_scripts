@@ -7,3 +7,4 @@ venv
 *.tif
 *.tiff
 *.jpeg
+.DS_Store
