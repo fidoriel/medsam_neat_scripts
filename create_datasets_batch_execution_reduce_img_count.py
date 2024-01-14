@@ -57,7 +57,10 @@ def create_dataset(folder: Path, img_count: int) -> None:
 
     # take every n image
     every_n = int(len(image_files) / img_count)
-    image_files = image_files[::every_n]
+    tmp = []
+    for i in range(0, len(image_files), every_n):
+        tmp.append(image_files[i])
+    image_files = tmp
 
     # copy images
     for image_file in image_files:
@@ -87,7 +90,7 @@ def create_dataset(folder: Path, img_count: int) -> None:
     create_ini_config(folder, img_count)    
 
 
-if __name__ == "__name__":
+if __name__ == "__main__":
     split_percentages = [1, 0.5, 0.25, 0.125, 0.1, 0.0625]
     datasets = []
     for i in split_percentages:
