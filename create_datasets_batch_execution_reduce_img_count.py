@@ -123,8 +123,4 @@ if __name__ == "__main__":
 
     # copy experiments to final folder
     experiments = Path("/root/neat/Experiments")
-    for f in os.listdir(experiments):
-        if os.path.isdir(experiments / f):
-            shutil.copytree(experiments / f, NEAT_OUTPUT / f)
-        else:
-            shutil.copy(experiments / f, NEAT_OUTPUT / f)
+    shutil.copytree(experiments, NEAT_OUTPUT)
