@@ -115,11 +115,16 @@ if __name__ == "__main__":
         shutil.copytree(dataset, SCENES, dirs_exist_ok=True)
 
         # run nikon2neat
-        os.system(f"{NIKON_TO_NEAT}")
+        r = os.system(f"{NIKON_TO_NEAT}")
+        if r != 0:
+            print(f"NIKON_TO_NEAT failed for {dataset}")
+            exit(1)
 
         # run reconstruct
-        os.system(f"{RECONSTRUCT} scenes/config.ini")
-
+        r = os.system(f"{RECONSTRUCT} scenes/config.ini")
+        if r != 0:
+            print(f"RECONSTRUCT failed for {dataset}")
+            exit(1)
 
     # copy experiments to final folder
     experiments = Path("/root/neat/Experiments")
