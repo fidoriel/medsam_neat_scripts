@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 
 DATASET_OUTPUT_DIRECTORY = Path("./new_datasets")
-ORIGINAL_DATASET_DIRECTORY = Path("/root/neat/dataset")
+ORIGINAL_DATASET_DIRECTORY = Path("/host_mount/dataset")
 NEAT_OUTPUT = Path("/host_mount/neat_results")
 import configparser
 
@@ -12,7 +12,7 @@ TOTAL_IMAGES = 360
 ORIGINAL_IMAGE_FOLDER = ORIGINAL_DATASET_DIRECTORY/Path("Pepper")
 ORIGINAL_PROJECTIONS_FOLDER = ORIGINAL_IMAGE_FOLDER/Path("projections")
 ORIGINAL_TEMP_FOLDER = ORIGINAL_DATASET_DIRECTORY/Path( "pepper")
-BASE_INI =  Path("/root/neat/configs/pepper.ini")
+BASE_INI = ORIGINAL_DATASET_DIRECTORY/ Path("pepper.ini")
 
 # executables
 NIKON_TO_NEAT =  Path("/root/neat/build/bin/nikon2neat")
@@ -80,17 +80,17 @@ def create_dataset(folder: Path, img_count: int) -> None:
         for i in range(0, len(image_files), int(len(image_files) / 10)):
             f.write(f"{i}\n")
             eval_num += 1
-    
+
     # create eval.txt
     eval_num = 0
     with open(folder/RELATIVE_TRAIN / EVAL, "w") as f:
         for i in range(int(int(len(image_files))/20), len(image_files), int(len(image_files) / 10)):
             f.write(f"{i}\n")
             eval_num += 1
-    
+
     # create config
     create_xtekct_config(folder, img_count)
-    create_ini_config(folder, img_count)    
+    create_ini_config(folder, img_count)
 
 
 if __name__ == "__main__":
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         input_folder = DATASET_OUTPUT_DIRECTORY / f"pepper_split_{i}"
         print(f"create dataset with {i * 100}% of the images {input_folder}")
         create_dataset(input_folder, int(TOTAL_IMAGES * i))
-        datasets.append(input_folder) 
+        datasets.append(input_folder)
 
     for dataset in datasets:
         # remove the content of SCENES recursive (keep the folder)
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                 shutil.rmtree(SCENES / f)
             else:
                 os.remove(SCENES / f)
-        
+
         # copy the dataset to SCENES rm before
         shutil.copytree(dataset, SCENES, dirs_exist_ok=True)
 
