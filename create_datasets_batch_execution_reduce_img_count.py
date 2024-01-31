@@ -1,11 +1,11 @@
 import os
 import shutil
 from pathlib import Path
+import configparser
 
 DATASET_OUTPUT_DIRECTORY = Path("/host_mount/new_datasets")
 ORIGINAL_DATASET_DIRECTORY = Path("/host_mount/dataset")
 NEAT_OUTPUT = Path("/host_mount/neat_results")
-import configparser
 
 # input files absolut for neat docker container
 TOTAL_IMAGES = 360
@@ -138,5 +138,8 @@ if __name__ == "__main__":
         experiment_folders = [f for f in os.listdir(experiments) if f.startswith("20")]
         folder = experiments / experiment_folders[0]
         # rename the folder
-        folder.rename(str(experiments) +"/"+ os.path.basename(os.path.normpath(str(dataset))))
-        shutil.copytree(folder, NEAT_OUTPUT)
+        print(f"rename {folder} to {dataset}")
+        final_name = os.path.basename(os.path.normpath(str(dataset)))
+        folder.rename(experiments / final_name)
+
+        shutil.copytree(experiments/final_name, NEAT_OUTPUT/final_name, dirs_exist_ok=True)
