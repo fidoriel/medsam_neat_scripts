@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-DATASET_OUTPUT_DIRECTORY = Path("./new_datasets")
+DATASET_OUTPUT_DIRECTORY = Path("/host_mount/new_datasets")
 ORIGINAL_DATASET_DIRECTORY = Path("/host_mount/dataset")
 NEAT_OUTPUT = Path("/host_mount/neat_results")
 import configparser
@@ -59,7 +59,7 @@ def create_dataset(folder: Path, img_count: int) -> None:
 
     # take every n image
     every_n = int(len(image_files) / img_count)
-    print(f"every_n: {every_n} out of {len(image_files)} images for {img_count} images")
+    print(f"every_n: {every_n}th out of {len(image_files)} images for {img_count} images")
     tmp = []
     for i in range(0, len(image_files), every_n):
         tmp.append(image_files[i])
@@ -76,15 +76,16 @@ def create_dataset(folder: Path, img_count: int) -> None:
     # eval and train are text files with the image number in each line. they should not overlap. please choose 10% of the images for eval and 10% for train. they shal not overlap
     # create train.txt
     eval_num = 0
+    range_to = int(len(image_files) / 10) or 1
     with open(folder/RELATIVE_TRAIN/ TRAIN, "w") as f:
-        for i in range(0, len(image_files), int(len(image_files) / 10)):
+        for i in range(0, len(image_files), range_to):
             f.write(f"{i}\n")
             eval_num += 1
 
     # create eval.txt
     eval_num = 0
     with open(folder/RELATIVE_TRAIN / EVAL, "w") as f:
-        for i in range(int(int(len(image_files))/20), len(image_files), int(len(image_files) / 10)):
+        for i in range(int(int(len(image_files))/20), len(image_files), range_to):
             f.write(f"{i}\n")
             eval_num += 1
 
@@ -95,16 +96,19 @@ def create_dataset(folder: Path, img_count: int) -> None:
 
 if __name__ == "__main__":
     DATASET_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
-    split_percentages = [1, 0.5, 0.25, 0.125, 0.1, 0.0625]
     datasets = []
-    for i in split_percentages:
+
+    for i in [4, 8, 12, 18, 36, 60, 120, 180, 360]:
         input_folder = DATASET_OUTPUT_DIRECTORY / f"pepper_split_{i}"
-        print(f"create dataset with {i * 100}% of the images {input_folder}")
-        create_dataset(input_folder, int(TOTAL_IMAGES * i))
+        print(f"create dataset with {i} of the images {input_folder}")
+        create_dataset(input_folder, i)
         datasets.append(input_folder)
 
     for dataset in datasets:
         # remove the content of SCENES recursive (keep the folder)
+        print("#" * 80)
+        print(f"run nikon2neat and reconstruct for {dataset}")
+        print("#" * 80)
         for f in os.listdir(SCENES):
             if os.path.isdir(SCENES / f):
                 shutil.rmtree(SCENES / f)
@@ -126,6 +130,13 @@ if __name__ == "__main__":
             print(f"RECONSTRUCT failed for {dataset}")
             exit(1)
 
-    # copy experiments to final folder
-    experiments = Path("/root/neat/Experiments")
-    shutil.copytree(experiments, NEAT_OUTPUT)
+        # rename the first folder starting with 20* to the dataset name, the last folder from dataset
+        # get the folderfatching 20* in Experiments
+        experiments = Path("/root/neat/Experiments")
+
+        # get the folderfatching 20* in Experiments
+        experiment_folders = [f for f in os.listdir(experiments) if f.startswith("20")]
+        folder = experiments / experiment_folders[0]
+        # rename the folder
+        folder.rename(str(experiments) +"/"+ os.path.basename(os.path.normpath(str(dataset))))
+        shutil.copytree(folder, NEAT_OUTPUT)
