@@ -97,6 +97,15 @@ def create_dataset(folder: Path, img_count: int) -> None:
 if __name__ == "__main__":
     DATASET_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
     datasets = []
+    experiments = Path("/root/neat/Experiments")
+
+    # clean the experiments directory
+    print("Cleaning output folder started")
+    r = os.system("rm -rf " + str(experiments) + "/*")
+    if r != 0:
+        print(f"Cleanup failed")
+        exit(1)
+    print("Cleaning output folder finished")
 
     for i in [4, 8, 12, 18, 36, 60, 120, 180, 360]:
         input_folder = DATASET_OUTPUT_DIRECTORY / f"pepper_split_{i}"
@@ -109,11 +118,6 @@ if __name__ == "__main__":
         print("#" * 80)
         print(f"run nikon2neat and reconstruct for {dataset}")
         print("#" * 80)
-        for f in os.listdir(SCENES):
-            if os.path.isdir(SCENES / f):
-                shutil.rmtree(SCENES / f)
-            else:
-                os.remove(SCENES / f)
 
         # copy the dataset to SCENES rm before
         shutil.copytree(dataset, SCENES, dirs_exist_ok=True)
@@ -132,7 +136,6 @@ if __name__ == "__main__":
 
         # rename the first folder starting with 20* to the dataset name, the last folder from dataset
         # get the folderfatching 20* in Experiments
-        experiments = Path("/root/neat/Experiments")
 
         # get the folderfatching 20* in Experiments
         experiment_folders = [f for f in os.listdir(experiments) if f.startswith("20")]
