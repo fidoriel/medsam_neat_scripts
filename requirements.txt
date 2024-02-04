@@ -1,2 +1,4 @@
 nibabel
 pillow
+wand
+matplotlib
