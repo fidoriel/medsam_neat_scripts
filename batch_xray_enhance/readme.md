@@ -1,9 +1,9 @@
 # build commands
 ```bash
-sudo docker buildx build -t fidoriel/xray-enhance --load .
+docker buildx build . -t fidoriel/xray-batch-enhance --load
 ```
 
 # run commands
 ```bash
-sudo docker run --rm -it -v ./projections:/data -v ./results:/app/results fidoriel/xray-enhance
+docker run --rm --init -v ./data:/data/ -v ./results:/app/results fidoriel/xray-batch-enhance bash /app/batch.sh
 ```
