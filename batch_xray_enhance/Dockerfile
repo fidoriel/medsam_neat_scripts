@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-bullseye
 
 ENV DEBIAN_FRONTEND=nointeractive
 ENV PYTHONUNBUFFERED=1
