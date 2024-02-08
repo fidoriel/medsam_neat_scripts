@@ -106,8 +106,15 @@ if __name__ == "__main__":
         print(f"Cleanup failed")
         exit(1)
     print("Cleaning output folder finished")
+    print("Cleaning tmp folder started")
+    r = os.system("rm -rf " + str(DATASET_OUTPUT_DIRECTORY) + "/*")
+    if r != 0:
+        print(f"Cleanup failed")
+        exit(1)
+    print("Cleaning tmp folder finished")
 
-    for i in [4, 8, 12, 18, 36, 60, 120, 180, 360]:
+    for i in [4,8,12,18,30,36,40,45,60,72,90,120,180, 360]:
+#    for i in [30,40,45,72,90]:
         input_folder = DATASET_OUTPUT_DIRECTORY / f"pepper_split_{i}"
         print(f"create dataset with {i} of the images {input_folder}")
         create_dataset(input_folder, i)
@@ -120,24 +127,21 @@ if __name__ == "__main__":
         print("#" * 80)
 
         # copy the dataset to SCENES rm before
+        r = os.system("rm -rf /root/neat/scenes/*")
         shutil.copytree(dataset, SCENES, dirs_exist_ok=True)
 
         # run nikon2neat
         r = os.system(f"{NIKON_TO_NEAT}")
         if r != 0:
             print(f"NIKON_TO_NEAT failed for {dataset}")
-            exit(1)
+            continue
 
         # run reconstruct
         r = os.system(f"{RECONSTRUCT} scenes/config.ini")
         if r != 0:
             print(f"RECONSTRUCT failed for {dataset}")
-            exit(1)
+            continue
 
-        # rename the first folder starting with 20* to the dataset name, the last folder from dataset
-        # get the folderfatching 20* in Experiments
-
-        # get the folderfatching 20* in Experiments
         experiment_folders = [f for f in os.listdir(experiments) if f.startswith("20")]
         folder = experiments / experiment_folders[0]
         # rename the folder
