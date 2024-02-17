@@ -2,3 +2,4 @@ nibabel
 pillow
 wand
 matplotlib
+skimage
