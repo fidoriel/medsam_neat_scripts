@@ -3,3 +3,4 @@ pillow
 wand
 matplotlib
 skimage
+opencv-python
