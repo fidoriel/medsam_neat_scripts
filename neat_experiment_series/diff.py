@@ -12,9 +12,13 @@ def load_image_and_crop(img_path):
     # up_left = (400, 102)
     # size = (660, 560)
 
+    # crop inner denser information
+    up_left = (548, 193)
+    size = (235, 450)
+
     # crop coral
-    up_left = (315, 226)
-    size = (822, 489)
+    # up_left = (315, 226)
+    # size = (822, 489)
 
     img = Image(filename=img_path)
     img.crop(up_left[0], up_left[1], width=size[0], height=size[1])
@@ -70,18 +74,19 @@ def analyze_experiment_images(directory_path, base_image_path, algorithm='ssim')
             diff_results[experiment_value] = diff_val
     return diff_results
 
-def plot_graph(diff_results, output_path):
+def plot_graph(diff_results, output_path, algo):
     lists = sorted(diff_results.items())
     x, y = zip(*lists)
 
+    plt.figure(figsize=(10, 8))
     plt.plot(x, y, marker='o')
     plt.xticks(x)
     plt.xlabel('Dataset Image Count')
-    plt.ylabel('Quality per Image (Diff / Experiment Img Count)')
-    plt.title('Quality per Image in Reconstruction Results using Highest Quality Reconstruction as Base')
+    plt.ylabel(f"{algo.upper()} Value")
+    plt.title('Quality per Image in Reconstruction Results using highest Quality Reconstruction as Base')
     plt.grid(True)
     plt.savefig(output_path)
-    # plt.show()
+    plt.show()
 
 parser = argparse.ArgumentParser(description='Process images to calculate and plot differences.')
 parser.add_argument('base_image', help='The path to the base image file.')
@@ -92,4 +97,4 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     diff_results = analyze_experiment_images(args.directory, args.base_image, args.algorithm)
-    plot_graph(diff_results, args.output)
+    plot_graph(diff_results, args.output, args.algorithm)
