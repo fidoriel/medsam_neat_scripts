@@ -48,4 +48,4 @@ if __name__ == '__main__':
     nii_file = 'LNM_0263_0001.nii'
     output_dir = 'saggital_slices'
     slice_direction = 'coronal'  # Change to 'coronal' or 'axial' as needed
-    save_nifti_slices_with_contrast(nii_file, output_dir, slice_direction, 1.5)
+    save_nifti_slices_with_contrast(nii_file, output_dir, slice_direction, 0.5)
